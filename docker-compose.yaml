@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  rc-ubuntu:
+    image: ubuntu:xenial
+    container_name: rc-ubuntu
+    hostname: rc-ubuntu
+    environment:
+      - ENV=dev
+    volumes:
+      - .:/root/.auto_setup_env:rw
+    working_dir: /root/.auto_setup_env
+    command: tail -f /dev/null
+  rc-debian:
+    image: debian:buster
+    container_name: rc-debian
+    hostname: rc-debian
+    environment:
+      - ENV=dev
+    volumes:
+      - .:/root/.auto_setup_env:rw
+    working_dir: /root/.auto_setup_env
+    command: tail -f /dev/null
+  rc-centos:
+    image: centos:7
+    container_name: rc-centos
+    hostname: rc-centos
+    environment:
+      - ENV=dev
+    volumes:
+      - .:/root/.auto_setup_env:rw
+    working_dir: /root/.auto_setup_env
+    command: tail -f /dev/null
+  rc-alpine:
+    image: alpine:3.10
+    container_name: rc-alpine
+    hostname: rc-alpine
+    environment:
+      - ENV=dev
+    volumes:
+      - .:/root/.auto_setup_env:rw
+    working_dir: /root/.auto_setup_env
+    command: tail -f /dev/null
+networks:
+  default:
+    external:
+      name: rc
