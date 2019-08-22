@@ -84,12 +84,12 @@ install_pp (){
 }
 
 dl_pp_scripts (){
-  if [ ! $ENV = "dev" ]; then
-    mkdir -p $DIR/src/auto_setup_env/manifests
-    mkdir -p $DIR/src/auto_setup_env/modules
-    wget -O https://raw.github.com/JustinTW/linux-auto-setup-dev-env/developer/src/manifests/init.pp $DIR/src/manifests/init.pp
-    wget -O https://raw.github.com/JustinTW/linux-auto-setup-dev-env/developer/src/requirements $DIR/src/requirements
-  fi
+  # if [ "$ENV" != "dev" ]; then
+    mkdir -p $DIR/src/manifests
+    mkdir -p $DIR/src/modules
+    wget https://raw.github.com/JustinTW/linux-auto-setup-dev-env/develop/src/manifests/init.pp -O $DIR/src/manifests/init.pp
+    wget https://raw.github.com/JustinTW/linux-auto-setup-dev-env/develop/src/requirements -O $DIR/src/requirements
+  # fi
 }
 
 pp_install_modules (){

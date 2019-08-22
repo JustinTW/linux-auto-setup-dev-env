@@ -39,4 +39,4 @@ ssh_keygen { 'root': }
 class { 'ohmyzsh': }
 ohmyzsh::install { ['root']: }
 ohmyzsh::theme { ['root']: theme => 'dst' } # specific theme
-ohmyzsh::plugins {'root': plugins => 'git github git-flow python ssh-agent autojump git-flow git-remote-branch tmux debian cp command-not-found last-working-dir docker kubectl helm' }
+ohmyzsh::plugins {'root': plugins => 'git github git-flow python ssh-agent autojump git-flow git-remote-branch tmux debian cp command-not-found last-working-dir docker kubectl helm npm' }
