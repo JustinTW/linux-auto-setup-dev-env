@@ -1,0 +1,84 @@
+export PATH=$PATH:/opt/fasd
+eval "$(fasd --init auto)"
+
+source /etc/profile.d/nvm.sh
+# load nvm for linux
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# load nvm for unix
+[ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"
+[ -s "/usr/local/opt/nvm/etc/bash_completion" ] && . "/usr/local/opt/nvm/etc/bash_completion"
+
+
+# HISTORY
+# number of lines kept in history
+export HISTSIZE=10000
+# # number of lines saved in the history after logout
+export SAVEHIST=10000
+# # location of history
+export HISTFILE=~/.zhistory
+# # append command to history file once executed
+setopt APPEND_HISTORY
+setopt hist_expire_dups_first
+setopt hist_find_no_dups
+setopt hist_ignore_all_dups
+setopt hist_ignore_dups
+setopt hist_ignore_space
+setopt hist_no_store
+setopt hist_reduce_blanks
+setopt hist_save_no_dups
+setopt hist_verify
+setopt inc_append_history
+setopt no_hist_allow_clobber
+setopt no_hist_beep
+setopt inc_append_history share_history
+
+# virtualenv and virtualenvwrapper
+if [ -f "/usr/local/bin/virtualenvwrapper.sh" ]
+then
+    VIRTUALENVWRAPPER_PYTHON='/usr/bin/python3'
+    source /usr/local/bin/virtualenvwrapper.sh > /dev/null 2>&1
+    export VIRTUAL_ENV_DISABLE_PROMPT='1'
+    export WORKON_HOME=~/Envs
+fi
+
+export LC_ALL=C
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+alias ll='ls -alh'
+alias v='f -e vim' # quick opening files with vim
+
+function git_prompt_info() {
+  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+  echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$ZSH_THEME_GIT_PROMPT_SUFFIX"
+}
+
+function gcms(){
+git commit -m "update submodules"
+}
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+# fix helm plugins error
+command -v helm &>/dev/null
+if [[ $? -eq 0 ]]; then
+  source <(helm completion zsh | sed -E 's/\["(.+)"\]/\[\1\]/g')
+fi
+
+function h(){
+helm $@
+}
+
+function m(){
+make $@
+}
+
+function wkd(){
+watch kubectl describe $@
+}
+
+function wkg(){
+watch kubectl get $@
+}

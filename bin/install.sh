@@ -10,7 +10,7 @@ install_base_pkgs (){
     apt-get update && \
     apt-get install -q -y --force-yes --fix-missing \
       wget \
-      dnsutils
+      dnsutils \
       build-essential && \
     return 0
 
@@ -105,6 +105,19 @@ pp_apply (){
   puppet apply $DIR/src/manifests/init.pp
 }
 
+link_rc (){
+  for TARGET in tmux.conf vimrc terminator.conf;
+  do
+    cd $HOME
+    if [ -e ".$TARGET" ]; then
+      mv ".$TARGET" ".$TARGET.old"
+      echo
+    fi
+    ln -s "$DIR/rc/$TARGET" ".$TARGET"
+  done
+  echo "source $DIR/rc/zshrc" >> $HOME/.zshrc
+}
+
 clean_cache (){
   # debian
   command -v apt-get >/dev/null &&
@@ -139,6 +152,7 @@ main (){
   dl_pp_scripts
   pp_install_modules
   pp_apply
+  link_rc
   #clean_cache
 }
 

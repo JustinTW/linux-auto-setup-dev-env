@@ -30,6 +30,18 @@ git::config { 'push.default':
 git::config { 'branch.autosetuprebase':
   value => 'always',
 }
+git::config { 'color.diff':
+  value => 'auto',
+}
+git::config { 'color.status':
+  value => 'auto',
+}
+git::config { 'color.branch':
+  value => 'auto',
+}
+git::config { 'color.log':
+  value => 'auto',
+}
 
 ssh_keygen { 'root': }
 
@@ -37,6 +49,12 @@ class { 'ohmyzsh': }
 ohmyzsh::install { ['root']: }
 ohmyzsh::theme { ['root']: theme => 'dst' } # specific theme
 ohmyzsh::plugins {'root': plugins => 'git github git-flow python ssh-agent autojump git-flow git-remote-branch tmux debian cp command-not-found last-working-dir docker kubectl helm npm' }
+
+vcsrepo { '/opt/fasd':
+  ensure   => present,
+  provider => git,
+  source   => 'https://github.com/clvv/fasd.git',
+}
 
 class { 'nvm':
   user => 'root',
