@@ -6,8 +6,6 @@ package {[
   'htop',
   'unzip',
   'mtr',
-  'dnsutils',
-  'build-essential',
   'autojump']:}
 
 class { 'sudo':
@@ -25,11 +23,10 @@ sudo::conf { 'sudo':
   content  => '%sudo ALL=(ALL) NOPASSWD: ALL',
 }
 
-include git
+
 git::config { 'push.default':
   value => 'current',
 }
-
 git::config { 'branch.autosetuprebase':
   value => 'always',
 }
@@ -40,3 +37,16 @@ class { 'ohmyzsh': }
 ohmyzsh::install { ['root']: }
 ohmyzsh::theme { ['root']: theme => 'dst' } # specific theme
 ohmyzsh::plugins {'root': plugins => 'git github git-flow python ssh-agent autojump git-flow git-remote-branch tmux debian cp command-not-found last-working-dir docker kubectl helm npm' }
+
+class { 'nvm':
+  user => 'root',
+  nvm_dir => '/opt/nvm',
+  version => 'v0.34.0',
+  profile_path => '/etc/profile.d/nvm.sh',
+  install_node => '10',
+}
+
+# class { 'docker': } # not support for ubuntu
+class {'docker::compose':
+  ensure => present
+}

@@ -9,15 +9,22 @@ install_base_pkgs (){
   command -v apt-get >/dev/null && \
     apt-get update && \
     apt-get install -q -y --force-yes --fix-missing \
-      wget && \
-    # apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+      wget \
+      dnsutils
+      build-essential && \
     return 0
 
   # centos
   command -v yum >/dev/null && \
     yum -y install \
-      wget && \
-    # yum clean all && \
+      wget \
+      epel-release \
+      bind-utils \
+      gcc \
+      g++ \
+      kernel-devel && \
+    yum -y groupinstall \
+      "Development Tools" && \
     return 0
 
   # alpine
@@ -25,8 +32,8 @@ install_base_pkgs (){
     echo http://dl-4.alpinelinux.org/alpine/edge/testing/ >> /etc/apk/repositories && \
     apk --update add --no-cache --virtual \
     wget \
-    bash && \
-    # rm -rf /var/cache/apk/* && \
+    bash \
+    drill && \
     return 0
 }
 
@@ -46,7 +53,6 @@ install_pp (){
       puppet && \
     ln -sf /opt/puppetlabs/bin/puppet /usr/local/bin/puppet && \
     rm -rf .tmp && \
-    # apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     return 0
 
   # ubuntu
@@ -62,7 +68,6 @@ install_pp (){
       puppet-agent && \
     ln -sf /opt/puppetlabs/bin/puppet /usr/local/bin/puppet && \
     rm -rf .tmp && \
-    # apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     return 0
 
   # centos
@@ -71,25 +76,22 @@ install_pp (){
     yum -y install \
       puppet && \
     ln -sf /opt/puppetlabs/bin/puppet /usr/local/bin/puppet && \
-    # yum clean all && \
     return 0
 
   # alpine
   command -v apk >/dev/null && \
-    echo http://dl-7e.alpinelinux.org/alpine/edge/testing/ >> /etc/apk/repositories && \
-    apk --update add --no-cache --virtual shadow ruby less bash && \
+    apk --update add --no-cache --virtual shadow ruby less && \
     gem install puppet --no-rdoc --no-ri && \
-    # rm -rf /var/cache/apk/* && \
     return 0
 }
 
 dl_pp_scripts (){
-  # if [ "$ENV" != "dev" ]; then
+  if [ "$ENV" != "dev" ]; then
     mkdir -p $DIR/src/manifests
     mkdir -p $DIR/src/modules
     wget https://raw.github.com/JustinTW/linux-auto-setup-dev-env/develop/src/manifests/init.pp -O $DIR/src/manifests/init.pp
     wget https://raw.github.com/JustinTW/linux-auto-setup-dev-env/develop/src/requirements -O $DIR/src/requirements
-  # fi
+  fi
 }
 
 pp_install_modules (){
@@ -103,12 +105,41 @@ pp_apply (){
   puppet apply $DIR/src/manifests/init.pp
 }
 
+clean_cache (){
+  # debian
+  command -v apt-get >/dev/null &&
+    source /etc/os-release && \
+    [[ $ID = "debian" ]] && \
+    echo "OS Version: Debian" && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    return 0
+
+  # ubuntu
+  command -v apt-get >/dev/null &&
+    source /etc/os-release && \
+    [[ $ID = "ubuntu" ]] && \
+    echo "OS Version: Ubuntu" && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    return 0
+
+  # centos
+  command -v yum >/dev/null && \
+    yum clean all && \
+    return 0
+
+  # alpine
+  command -v apk >/dev/null && \
+    rm -rf /var/cache/apk/* && \
+    return 0
+}
+
 main (){
   install_base_pkgs
   install_pp
   dl_pp_scripts
   pp_install_modules
   pp_apply
+  #clean_cache
 }
 
 main
